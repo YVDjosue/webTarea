@@ -85,18 +85,42 @@ $query = mysqli_query($conn, "SELECT * FROM tareas");
                 <div class="modal-header">
                     <h5 class="modal-title" id="createTaskModalLabel">Crear Nueva Tarea</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <form id="createTaskForm">
                         <div class="form-group">
-                            <label for="taskTitle">Título</label>
-                            <input type="text" class="form-control" id="taskTitle" required>
+                            <label for="taskCode">Código</label>
+                            <input type="text" class="form-control" id="taskCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskName">Nombre</label>
+                            <input type="text" class="form-control" id="taskName" required>
                         </div>
                         <div class="form-group">
                             <label for="taskDescription">Descripción</label>
                             <textarea class="form-control" id="taskDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskStartDate">Fecha de Registro</label>
+                            <input type="date" class="form-control" id="taskStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskEndDate">Fecha de Culminación</label>
+                            <input type="date" class="form-control" id="taskEndDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskCompletionDate">Fecha de Finalización</label>
+                            <input type="date" class="form-control" id="taskCompletionDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskResponsible">Responsable</label>
+                            <input type="text" class="form-control" id="taskResponsible" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskStatus">Estado</label>
+                            <input type="text" class="form-control" id="taskStatus" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>
@@ -112,18 +136,42 @@ $query = mysqli_query($conn, "SELECT * FROM tareas");
                 <div class="modal-header">
                     <h5 class="modal-title" id="editTaskModalLabel">Editar Tarea</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">×</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <form id="editTaskForm">
                         <div class="form-group">
-                            <label for="editTaskTitle">Título</label>
-                            <input type="text" class="form-control" id="editTaskTitle" required>
+                            <label for="editTaskCode">Código</label>
+                            <input type="text" class="form-control" id="editTaskCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTaskName">Nombre</label>
+                            <input type="text" class="form-control" id="editTaskName" required>
                         </div>
                         <div class="form-group">
                             <label for="editTaskDescription">Descripción</label>
                             <textarea class="form-control" id="editTaskDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTaskStartDate">Fecha de Registro</label>
+                            <input type="date" class="form-control" id="editTaskStartDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTaskEndDate">Fecha de Culminación</label>
+                            <input type="date" class="form-control" id="editTaskEndDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTaskCompletionDate">Fecha de Finalización</label>
+                            <input type="date" class="form-control" id="editTaskCompletionDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTaskResponsible">Responsable</label>
+                            <input type="text" class="form-control" id="editTaskResponsible" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editTaskStatus">Estado</label>
+                            <input type="text" class="form-control" id="editTaskStatus" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     </form>

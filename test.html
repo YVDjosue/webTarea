@@ -1,9 +1,3 @@
-<?php
-require("security.php");
-require("conexion.php");
-$query = mysqli_query($conn, "SELECT * FROM tareas");
-
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -46,27 +40,14 @@ $query = mysqli_query($conn, "SELECT * FROM tareas");
             <thead>
                 <tr>
                     <th>ID</th>
-                    <th>NOMBRE DE TAREA</th>
-                    <th>CODIGO</th>
-                    <th>RESPONSABLE</th>
-                    <th>ESTADO</th>
-                    <th>ACCIONES</th>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Fecha de Creación</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody id="taskTableBody">
-                <?php
-
-                while($row = mysqli_fetch_array($query)){
-                    echo "<tr>
-                             <td>{$row['id']}</td>
-                             <td>{$row['nombre']}</td>
-                             <td>{$row['codigo']}</td>
-                             <td>{$row['responsable']}</td>
-                             <td>{$row['estado']}</td>
-                             <td>botoncitos</td>
-                         </tr>";
-                }
-                ?>
+                <!-- Aquí se llenarán las tareas desde la base de datos -->
             </tbody>
         </table>
 
