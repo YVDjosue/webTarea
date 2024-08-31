@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $estado = $_POST['estado'];
     $eliminado = $_POST['eliminado'];
 
-    // Manejo del archivo adjunto
+    // Manejo del nuevo archivo adjunto
     $adjunto = '';
     if (isset($_FILES['adjunto']) && $_FILES['adjunto']['error'] == 0) {
         $allowed = ['jpg', 'jpeg', 'png', 'pdf'];
@@ -34,8 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit();
         }
     }
+    //Borrando archivo adunto antiguo del servidor
+    $sql = "SELECT adjunto from tareas where id='$id'";
+    $result=$conn->query($sql);
+    $row=$result->fetch_assoc();
+    $old_adjunto=$row['adjunto'];
+    if(file_exists("files/".$old_adjunto)){
+        unlink("files/".$old_adjunto);
+    }
 
-    $sql = "UPDATE tareas SET codigo='$codigo', nombre='$nombre', descripcion='$descripcion', fecha_de_registro='$fecha_de_registro', fecha_culminacion='$fecha_culminacion', fecha_finalizacion='$fecha_finalizacion', responsable='$responsable', estado='$estado' WHERE id=$id";
+    //Guardando el nombre del nuevo archivo en la base de datos
+    $sql = "UPDATE tareas SET codigo='$codigo', nombre='$nombre', descripcion='$descripcion', fecha_de_registro='$fecha_de_registro', fecha_culminacion='$fecha_culminacion', fecha_finalizacion='$fecha_finalizacion', responsable='$responsable', estado='$estado', eliminado='$eliminado', adjunto='$adjunto' WHERE id=$id";
 
     if ($conn->query($sql) === TRUE) {
         header('Location: index.php');
