@@ -1,9 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['usuario'])) {
-    header('Location: login.php');
-    exit();
-}
+include('security.php');
 include('conexion.php');
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';

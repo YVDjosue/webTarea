@@ -1,25 +1,38 @@
 <?php
 session_start();
-include('conexion.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $usuario = $_POST['usuario'];
-    $contrasenia = $_POST['contrasenia'];
-
-    $sql = "SELECT * FROM usuarios WHERE usuario = '$usuario' AND estado = 1";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
+    include('conexion.php');
+    $username = $_POST['usuario'];
+    $password = $_POST['contrasenia'];
+    $sql = "SELECT * FROM usuarios WHERE usuario = ? AND estado = 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    echo $username." ".$password;
+    if ($result->num_rows === 1) {
+        echo "primer if";
         $row = $result->fetch_assoc();
-        if ($contrasenia == $row['contrasenia']) {
-            $_SESSION['usuario'] = $usuario;
-            header('Location: index.php');
+        echo $row['contrasenia'];
+        if (password_verify($password, $row['contrasenia'])) {
+            // Inicio de sesión exitoso
+            echo "segundo if";
+            $_SESSION['user_id'] = $row['id'];
+            $_SESSION['username'] = $row['usuario'];
+            header("Location: index.php"); // Redireccionar a la página index
+            exit();
         } else {
             $error = "Contraseña incorrecta.";
         }
     } else {
-        $error = "Usuario no encontrado o inactivo.";
+        $error = "Usuario no encontrado.";
     }
+
+    // Cerrar la conexión
+    $stmt->close();
+    $conn->close();
+
 }
 ?>
 
@@ -70,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
                     <div class="text-center">
-                        <a href="/registro.php" class="text-decoration-none">¿No tienes cuenta? <span class="text-primary">Crea una aquí</span></a>
+                        <a href="registro.php" class="text-decoration-none">¿No tienes cuenta? <span class="text-primary">Crea una aquí</span></a>
                     </div>
                 </form>
             </div>

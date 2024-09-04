@@ -1,25 +1,35 @@
 <?php
+
 session_start();
-include('conexion.php');
-
+$msg = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $usuario = $_POST['usuario'];
-  $contrasenia = $_POST['contrasenia'];
+  include('conexion.php');
+  $username = $_POST['username'];
+  $password = $_POST['password'];
+  $estado = 1;
 
-  $sql = "SELECT * FROM usuarios WHERE usuario = '$usuario' AND estado = 1";
-  $result = $conn->query($sql);
+  // Hash de la contraseña
+  $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-  if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    if ($contrasenia == $row['contrasenia']) {
-      $_SESSION['usuario'] = $usuario;
-      header('Location: index.php');
-    } else {
-      $error = "Contraseña incorrecta.";
-    }
-  } else {
-    $error = "Usuario no encontrado o inactivo.";
-  }
+  // Preparar y ejecutar la consulta SQL
+  $sql = "INSERT INTO usuarios (usuario, contrasenia, estado) VALUES (?, ?, ?)";
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("ssi", $username, $hashed_password, $estado);
+
+  if ($stmt->execute()) {
+    $msg = '<script>
+            $(document).ready(function() {
+                $("#successModal").modal("show");
+            });
+          </script>';
+} else {
+    echo "Error: " . $sql . "<br>" . $conn->error;
+}
+
+// Cerrar la conexión
+$stmt->close();
+$conn->close();
+//exit(); // Asegúrate de que no se siga ejecutando el código PHP después de enviar el script JavaScript
 }
 ?>
 
@@ -29,9 +39,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Registro de nuevo usuario</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+        function validateForm(event) {
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+            if (password !== confirmPassword) {
+                var modal = new bootstrap.Modal(document.getElementById('errorModal'));
+                modal.show();
+                event.preventDefault(); // Impide el envío del formulario
+            }
+        }
+  </script>
+  <?php echo $msg;?>
   <style>
     .register-container {
       width: 100%;
@@ -68,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       /* Color del enlace */
     }
   </style>
+
 </head>
 
 <body class="bg-light d-flex justify-content-center align-items-center vh-100">
@@ -89,18 +115,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       </svg>
     </div>
     <h2 class="text-center mb-4">Crear Cuenta</h2>
-    <form>
+    <form method="POST" action="registro.php" onsubmit="validateForm(event)">
       <div class="mb-3">
         <label for="username" class="form-label">Nombre de Usuario</label>
-        <input type="text" class="form-control" id="username" placeholder="Nombre de Usuario" required>
-      </div>
-      <div class="mb-3">
-        <label for="email" class="form-label">Correo Electrónico</label>
-        <input type="email" class="form-control" id="email" placeholder="Correo Electrónico" required>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Nombre de Usuario" required>
       </div>
       <div class="mb-3">
         <label for="password" class="form-label">Contraseña</label>
-        <input type="password" class="form-control" id="password" placeholder="Contraseña" required>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Contraseña" required>
       </div>
       <div class="mb-3">
         <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
@@ -108,13 +130,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       </div>
       <button type="submit" class="btn btn-primary w-100 mb-2">Registrarse</button>
       <div class="text-center">
-        <a href="/login.php" class="text-decoration-none">¿Ya tienes cuenta? <span class="text-primary">Inicia sesión aquí</span></a>
+        <a href="login.php" class="text-decoration-none">¿Ya tienes cuenta? <span class="text-primary">Inicia sesión aquí</span></a>
       </div>
     </form>
   </div>
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Modal de Bootstrap -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Las contraseñas no coinciden.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Éxito</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Usuario registrado exitosamente.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
