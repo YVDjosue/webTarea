@@ -1,4 +1,6 @@
 <?php
+sessiion_start();
+include('security.php');
 include('conexion.php');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

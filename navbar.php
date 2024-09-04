@@ -6,7 +6,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="#">Hola, <?php echo $_SESSION['usuario']; ?></a>
+                <a class="nav-link" href="#">Hola, <?php echo $_SESSION['username']; ?></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="logout.php">Cerrar Sesión</a>
