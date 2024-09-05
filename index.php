@@ -14,7 +14,7 @@ if(isset($_GET['update'])) {
 }
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';
-$searchQuery = $search ? "WHERE nombre LIKE '%$search%' OR descripcion LIKE '%$search%' OR codigo LIKE '%$search%' OR responsable LIKE '%$search%' OR estado LIKE '%$search%'" : '';
+$searchQuery = $search ? "and nombre LIKE '%$search%' OR descripcion LIKE '%$search%' OR codigo LIKE '%$search%' OR responsable LIKE '%$search%' OR estado LIKE '%$search%'" : '';
 
 $limit = 20; // Número de tareas por página
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -27,7 +27,7 @@ $total = $taskCount['id'];
 $pages = ceil($total / $limit);
 
 // Obtener las tareas para la página actual
-$sql = "SELECT id, nombre, codigo, responsable, estado FROM tareas $searchQuery LIMIT $start, $limit";
+$sql = "SELECT id, nombre, codigo, responsable, estado FROM tareas WHERE eliminado=0 $searchQuery LIMIT $start, $limit";
 $result = $conn->query($sql);
 ?>
 
