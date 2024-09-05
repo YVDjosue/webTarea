@@ -51,7 +51,7 @@ $row = $result->fetch_assoc();
             </div>
             <div class="form-group">
                 <label for="responsable">Responsable</label>
-                <input type="text" class="form-control" id="responsable" name="responsable" value="<?php echo $row['responsable']; ?>" required>
+                <input type="text" class="form-control" id="responsable" name="responsable" readonly value="<?php echo $row['responsable']; ?>" required onclick="openColaboradorWindow()">
             </div>
             <div class="form-group">
                 <label for="estado">Estado</label>
@@ -97,6 +97,15 @@ $row = $result->fetch_assoc();
                 event.preventDefault();
             }
         });
+
+        function openColaboradorWindow() {
+        var width = 600;
+        var height = 400;
+        var left = (screen.width / 2) - (width / 2);
+        var top = (screen.height / 2) - (height / 2);
+        var url = 'fetch_colaboradores.php';
+        window.open(url, 'Colaboradores', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left);
+    }
     </script>
 </body>
 
