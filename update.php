@@ -1,5 +1,5 @@
 <?php
-sessiion_start();
+session_start();
 include('security.php');
 include('conexion.php');
 
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "UPDATE tareas SET codigo='$codigo', nombre='$nombre', descripcion='$descripcion', fecha_de_registro='$fecha_de_registro', fecha_culminacion='$fecha_culminacion', fecha_finalizacion='$fecha_finalizacion', responsable='$responsable', estado='$estado', eliminado='$eliminado', adjunto='$adjunto' WHERE id=$id";
 
     if ($conn->query($sql) === TRUE) {
-        header('Location: index.php');
+        header('Location: index.php?update=true');
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }

@@ -3,10 +3,20 @@ session_start();
 include('security.php');
 include('conexion.php');
 
+$msg='';
+if(isset($_GET['update'])) {
+    $msg='
+<script>
+    $(document).ready(function() {
+        $("#confirmationModal").modal("show");
+    });
+</script>';
+}
+
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 $searchQuery = $search ? "WHERE nombre LIKE '%$search%' OR descripcion LIKE '%$search%' OR codigo LIKE '%$search%' OR responsable LIKE '%$search%' OR estado LIKE '%$search%'" : '';
 
-$limit = 10; // Número de tareas por página
+$limit = 20; // Número de tareas por página
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $start = ($page - 1) * $limit;
 
@@ -84,7 +94,7 @@ function getColorClass($estado)
                                 <td>{$row['responsable']}</td>
                                 <td><span class='{$colorClass}'>{$row['estado']}</span></td>
                                 <td>
-                                     <a href='edit.php?id={$row['id']}' class='btn btn-info btn-sm'><i class='bi bi-file-earmark-ruled-fill'></i></a>
+                                     <a href='view.php?id={$row['id']}' class='btn btn-info btn-sm'><i class='bi bi-file-earmark-ruled-fill'></i></a>
                                      <a href='edit.php?id={$row['id']}' class='btn btn-primary btn-sm'><i class='bi bi-pencil-fill'></i></a>
                                      <button class='btn btn-danger btn-sm delete-btn' data-id='{$row['id']}' data-toggle='modal' data-target='#confirmDeleteModal'><i class='bi bi-x-lg'></i></button>
                                 </td>
@@ -126,7 +136,7 @@ function getColorClass($estado)
         </nav>
     </div>
 
-    <!-- Modal de Confirmación -->
+    <!-- Modal de Confirmación de borrado -->
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -147,6 +157,26 @@ function getColorClass($estado)
         </div>
     </div>
 
+    <!-- Modal de Confirmación de actualización -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirmación</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Los cambios se han guardado correctamente.</p>
+                </div>
+                <div class="modal-footer">
+                    <a href="index.php" class="btn btn-primary">Aceptar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.delete-btn').forEach(function(button) {
@@ -160,6 +190,7 @@ function getColorClass($estado)
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <?php echo $msg; ?>
 </body>
 
 </html>

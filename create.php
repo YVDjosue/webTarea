@@ -46,7 +46,7 @@ include('conexion.php');
             </div>
             <div class="form-group">
                 <label for="responsable">Responsable</label>
-                <input type="text" class="form-control" id="responsable" name="responsable" required>
+                <input type="text" class="form-control" id="responsable" name="responsable" required readonly onclick="openColaboradorWindow()">
             </div>
             <div class="form-group">
                 <label for="estado">Estado</label>
@@ -74,14 +74,10 @@ include('conexion.php');
                 Cancelar
             </button>
         </form>
-
-
     </div>
+<br>
 </body>
-
 </html>
-</form>
-</div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -94,8 +90,6 @@ include('conexion.php');
             icon: "warning",
         });
     }
-</script>
-<script>
     document.getElementById('createTaskForm').addEventListener('submit', function(event) {
         var fechaRegistro = new Date(document.getElementById('fecha_de_registro').value);
         var fechaCulminacion = new Date(document.getElementById('fecha_culminacion').value);
@@ -111,8 +105,14 @@ include('conexion.php');
             event.preventDefault();
         }
     });
+
+    function openColaboradorWindow() {
+        var width = 600;
+        var height = 400;
+        var left = (screen.width / 2) - (width / 2);
+        var top = (screen.height / 2) - (height / 2);
+        var url = 'fetch_colaboradores.php';
+        window.open(url, 'Colaboradores', 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no, width=' + width + ', height=' + height + ', top=' + top + ', left=' + left);
+    }
 </script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-</body>
-
-</html>
