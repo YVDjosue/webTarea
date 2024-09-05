@@ -25,11 +25,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $adjunto = uniqid() . '-' . date('YmdHis') . '.' . $fileExt;
                 move_uploaded_file($_FILES['adjunto']['tmp_name'], 'files/' . $adjunto);
             } else {
-                echo "El archivo es demasiado grande.";
+                header("Location: create.php?error=El archivo es demasiado grande. El tamaño máximo permitido es de 1MB para PDF y 500KB para imágenes.");
                 exit();
             }
         } else {
-            echo "Tipo de archivo no permitido.";
+            echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Tipo de archivo no permitido',
+                    text: 'Solo se permiten archivos JPG, JPEG, PNG, y PDF.',
+                    confirmButtonText: 'Aceptar'
+                }).then(() => {
+                    window.history.back();
+                });
+                </script>";
             exit();
         }
     }
@@ -45,4 +54,3 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $conn->close();
 }
-?>

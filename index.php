@@ -20,7 +20,7 @@ $total = $taskCount['id'];
 $pages = ceil($total / $limit);
 
 // Obtener las tareas para la página actual
-$sql = "SELECT id, nombre, codigo, responsable, estado FROM tareas $searchQuery LIMIT $start, $limit";
+$sql = "SELECT id, nombre, codigo, responsable, estado, adjunto FROM tareas $searchQuery LIMIT $start, $limit";
 $result = $conn->query($sql);
 ?>
 
@@ -58,7 +58,7 @@ function getColorClass($estado)
 <body>
     <?php include('navbar.php'); ?>
     <div class="container mt-5">
-        <h2 class="mb-4">Lista de Tareas</h2>
+        <h2 class="mb-4"><b>Lista de Tareas</b></h2>
         <a href="create.php" class="btn btn-primary mb-3">Crear Nueva Tarea</a>
         <form method="GET" action="index.php">
             <input class="form-control mb-3" id="searchInput" name="search" type="text" placeholder="Buscar..." value="<?php echo $search; ?>">
@@ -80,6 +80,7 @@ function getColorClass($estado)
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $colorClass = getColorClass($row['estado']);
+                            $adjunto = htmlspecialchars($row['adjunto']);
                             echo "<tr>
                                 <td>{$row['id']}</td>
                                 <td>{$row['nombre']}</td>
@@ -87,9 +88,11 @@ function getColorClass($estado)
                                 <td>{$row['responsable']}</td>
                                 <td><span class='{$colorClass}'>{$row['estado']}</span></td>
                                 <td>
-                                     <a href='edit.php?id={$row['id']}' class='btn btn-info btn-sm'><i class='bi bi-file-earmark-ruled-fill'></i></a>
+                                    
                                      <a href='edit.php?id={$row['id']}' class='btn btn-primary btn-sm'><i class='bi bi-pencil-fill'></i></a>
                                      <button class='btn btn-danger btn-sm delete-btn' data-id='{$row['id']}' data-toggle='modal' data-target='#confirmDeleteModal'><i class='bi bi-x-lg'></i></button>
+                                     " . (!empty($adjunto) ? "<a href='files/{$adjunto}' class='btn btn-secondary btn-sm' target='_blank'><i class='bi bi-file-earmark-text'></i></a>" : "") . "
+                                     
                                 </td>
                               </tr>";
                         }
@@ -163,6 +166,7 @@ function getColorClass($estado)
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 
 </html>

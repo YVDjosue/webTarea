@@ -6,22 +6,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $usuario = $_POST['usuario'];
     $contrasenia = $_POST['contrasenia'];
 
-    $sql = "SELECT * FROM usuarios WHERE usuario = '$usuario' AND estado = 1";
-    $result = $conn->query($sql);
+    // Preparar la consulta SQL para evitar inyecciones SQL
+    $sql = "SELECT * FROM usuarios WHERE usuario = ? AND estado = 1";
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        if ($contrasenia == $row['contrasenia']) {
-            $_SESSION['usuario'] = $usuario;
-            header('Location: index.php');
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->bind_param("s", $usuario);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Verificar si se encontró el usuario
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+
+            // Verificar la contraseña usando password_verify
+            if (password_verify($contrasenia, $row['contrasenia'])) {
+                $_SESSION['usuario'] = $usuario;
+                header('Location: index.php');
+                exit();
+            } else {
+                $error = "Contraseña incorrecta.";
+            }
         } else {
-            $error = "Contraseña incorrecta.";
+            $error = "Usuario no encontrado o inactivo.";
         }
+
+        $stmt->close();
     } else {
-        $error = "Usuario no encontrado o inactivo.";
+        $error = "Error en la preparación de la consulta: " . $conn->error;
     }
+
+    $conn->close();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -54,23 +71,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </svg>
                 </div>
                 <br>
-                <!-- <i class="bi bi-people-fill" style="font-size: 2rem; color: cornflowerblue;"></i>  \-->
-                <!-- <h2 class="text-center mb-4">Login</h2> -->
                 <?php if (isset($error)): ?>
                     <div class="alert alert-danger"><?php echo $error; ?></div>
                 <?php endif; ?>
-                <form method="POST" action="login.php">
+                <form method="POST" action="login.php" class="needs-validation" novalidate>
                     <div class="form-group">
                         <label for="usuario"><b>Usuario</b></label>
                         <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingrese su usuario" required>
+                        <div class="invalid-feedback">
+                            Por favor, ingresa tu usuario.
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="contrasenia"><b>Contraseña</b></label>
                         <input type="password" class="form-control" id="contrasenia" name="contrasenia" placeholder="Ingrese su contraseña" required>
+                        <div class="invalid-feedback">
+                            Por favor, ingresa tu contraseña.
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
                     <div class="text-center">
-                        <a href="/registro.php" class="text-decoration-none">¿No tienes cuenta? <span class="text-primary">Crea una aquí</span></a>
+                        <a href="/registro_form.php" class="text-decoration-none">¿No tienes cuenta? <span class="text-primary">Crea una aquí</span></a>
                     </div>
                 </form>
             </div>
@@ -79,6 +100,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
 </body>
 
 </html>

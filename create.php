@@ -5,6 +5,11 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 include('conexion.php');
+// Comprobación de errores en la URL
+$error = '';
+if (isset($_GET['error'])) {
+    $error = $_GET['error'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -68,54 +73,92 @@ include('conexion.php');
                 </select>
             </div>
             <div class="form-group">
-                <label for="adjunto">Adjunto</label>
-                <input type="file" class="form-control" id="adjunto" name="adjunto" accept=".jpg,.jpeg,.png,.pdf">
+                <label for="adjunto">Subir Archivo</label>
+                <div class="custom-file">
+                    <input
+                        type="file"
+                        class="form-control-file"
+                        id="adjunto"
+                        name="adjunto"
+                        accept=".jpg,.jpeg,.png,.pdf" />
+                    <label class="custom-file-label" for="adjunto">Adjuntar</label>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Guardar</button>
 
-            <button onclick="window.location.href='/index.php'" class="btn btn-warning">
+            <button type="button" onclick="cancelAction()" class="btn btn-warning">
                 Cancelar
             </button>
         </form>
-
-
     </div>
-</body>
 
-</html>
-</form>
-</div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-<script>
-    function validateForm() {
-        swal({
-            title: "Cuidado!",
-            text: "La fecha de finalización debe ser mayor o igual a la fecha de culminación!",
-            icon: "warning",
-        });
-    }
-</script>
-<script>
-    document.getElementById('createTaskForm').addEventListener('submit', function(event) {
-        var fechaRegistro = new Date(document.getElementById('fecha_de_registro').value);
-        var fechaCulminacion = new Date(document.getElementById('fecha_culminacion').value);
-        var fechaFinalizacion = new Date(document.getElementById('fecha_finalizacion').value);
-
-        if (fechaCulminacion < fechaRegistro) {
-
-            validateForm();
-            event.preventDefault();
-        } else if (fechaFinalizacion < fechaCulminacion) {
-            validateForm();
-            // alert('La fecha de finalización debe ser mayor o igual a la fecha de culminación.');
-            event.preventDefault();
+    <script>
+        function showErrorModal(message) {
+            document.getElementById('errorMessage').innerText = message;
+            $('#errorModal').modal('show');
         }
-    });
-</script>
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    </script>
+
+    <?php if ($error): ?>
+        <script>
+            swal({
+                title: "Error",
+                text: "<?php echo htmlspecialchars($error); ?>",
+                icon: "warning",
+            }).then((willContinue) => {
+                if (willContinue) {
+                    window.history.back();
+                }
+            });
+        </script>
+    <?php endif; ?>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function cancelAction() {
+            window.location.href = 'index.php';
+        }
+
+        function validateAdjunto() {
+            swal({
+                title: "Cuidado!",
+                text: "El archivo es demasiado grande.",
+                icon: "warning",
+            });
+        }
+
+        function validateForm() {
+            swal({
+                title: "Cuidado!",
+                text: "La fecha de finalización debe ser mayor o igual a la fecha de culminación!",
+                icon: "warning",
+            });
+        }
+
+        document.getElementById('createTaskForm').addEventListener('submit', function(event) {
+            var fechaRegistro = new Date(document.getElementById('fecha_de_registro').value);
+            var fechaCulminacion = new Date(document.getElementById('fecha_culminacion').value);
+            var fechaFinalizacion = new Date(document.getElementById('fecha_finalizacion').value);
+
+            if (fechaCulminacion < fechaRegistro) {
+                validateForm();
+                event.preventDefault();
+            } else if (fechaFinalizacion < fechaCulminacion) {
+                validateForm();
+                event.preventDefault();
+            }
+        });
+
+        document.getElementById('adjunto').addEventListener('change', function() {
+            var fileName = this.files[0].name;
+            this.nextElementSibling.innerHTML = fileName;
+        });
+    </script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
 </body>
 
 </html>

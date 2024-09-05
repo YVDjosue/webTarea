@@ -1,17 +1,5 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "mastnac";
-
-// Crear conexión
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar conexión
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
-
+include 'conexion.php';
 $sql = "INSERT INTO tareas (codigo, nombre, descripcion, fecha_de_registro, fecha_culminacion, fecha_finalizacion, responsable, estado, eliminado, adjunto) VALUES ";
 
 $values = [];
@@ -39,4 +27,3 @@ if ($conn->query($sql) === TRUE) {
 }
 
 $conn->close();
-?>
