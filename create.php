@@ -42,7 +42,7 @@ if (isset($_GET['error'])) {
             </div>
             <div class="form-group">
                 <label for="fecha_de_registro">Fecha de Registro</label>
-                <input type="date" class="form-control" id="fecha_de_registro" name="fecha_de_registro" required>
+                <input type="date" class="form-control" id="fecha_de_registro" name="fecha_de_registro" value="<?php echo date('Y-m-d'); ?>" readonly>
             </div>
             <div class="form-group">
                 <label for="fecha_culminacion">Fecha de Culminación</label>

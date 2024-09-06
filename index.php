@@ -6,6 +6,7 @@ if (!isset($_SESSION['usuario'])) {
 }
 include('conexion.php');
 
+
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 $searchQuery = $search ? "WHERE nombre LIKE '%$search%' OR descripcion LIKE '%$search%' OR codigo LIKE '%$search%' OR responsable LIKE '%$search%' OR estado LIKE '%$search%'" : '';
 
@@ -20,10 +21,10 @@ $total = $taskCount['id'];
 $pages = ceil($total / $limit);
 
 // Obtener las tareas para la página actual
-$sql = "SELECT id, nombre, codigo, responsable, estado, adjunto FROM tareas $searchQuery LIMIT $start, $limit";
+$sql = "SELECT id, nombre, codigo, responsable, estado, adjunto, fecha_de_registro FROM tareas $searchQuery LIMIT $start, $limit";
 $result = $conn->query($sql);
-?>
 
+?>
 
 <?php
 function getColorClass($estado)
@@ -44,6 +45,7 @@ function getColorClass($estado)
 ?>
 
 
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -58,8 +60,11 @@ function getColorClass($estado)
 <body>
     <?php include('navbar.php'); ?>
     <div class="container mt-5">
-        <h2 class="mb-4"><b>Lista de Tareas</b></h2>
-        <a href="create.php" class="btn btn-primary mb-3">Crear Nueva Tarea</a>
+        <div class="row">
+            <h2 class="col-md-10"><b>Lista de Tareas</b></h2>
+            <a href="create.php" class="btn btn-primary col-mb-2">Crear Nueva Tarea</a>
+        </div>
+        <br>
         <form method="GET" action="index.php">
             <input class="form-control mb-3" id="searchInput" name="search" type="text" placeholder="Buscar..." value="<?php echo $search; ?>">
         </form>
@@ -70,6 +75,7 @@ function getColorClass($estado)
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Código</th>
+                        <th>fecha de registro</th>
                         <th>Responsable</th>
                         <th>Estado</th>
                         <th>Acciones</th>
@@ -85,10 +91,11 @@ function getColorClass($estado)
                                 <td>{$row['id']}</td>
                                 <td>{$row['nombre']}</td>
                                 <td>{$row['codigo']}</td>
+                                <td>{$row['fecha_de_registro']}</td>
                                 <td>{$row['responsable']}</td>
                                 <td><span class='{$colorClass}'>{$row['estado']}</span></td>
                                 <td>
-                                    
+                                    <a href='view.php?id={$row['id']}' class='btn btn-info btn-sm'><i class='bi bi-eye-fill'></i></a>
                                      <a href='edit.php?id={$row['id']}' class='btn btn-primary btn-sm'><i class='bi bi-pencil-fill'></i></a>
                                      <button class='btn btn-danger btn-sm delete-btn' data-id='{$row['id']}' data-toggle='modal' data-target='#confirmDeleteModal'><i class='bi bi-x-lg'></i></button>
                                      " . (!empty($adjunto) ? "<a href='files/{$adjunto}' class='btn btn-secondary btn-sm' target='_blank'><i class='bi bi-file-earmark-text'></i></a>" : "") . "
@@ -148,6 +155,34 @@ function getColorClass($estado)
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                     <a href="#" class="btn btn-danger" id="confirmDeleteButton">Eliminar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal tarea -->
+    <div id="modalTarea" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Información de la tarea</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Código:</strong> <span id="codigo"></span></p>
+                    <p><strong>Nombre:</strong> <span id="nombre"></span></p>
+                    <p><strong>Descripción:</strong> <span id="descripcion"></span></p>
+                    <p><strong>Fecha de registro:</strong> <span id="fecha_de_registro"></span></p>
+                    <p><strong>Fecha de culminación:</strong> <span id="fecha_culminacion"></span></p>
+                    <p><strong>Fecha de finalización:</strong> <span id="fecha_finalizacion"></span></p>
+                    <p><strong>Responsable:</strong> <span id="responsable"></span></p>
+                    <p><strong>Estado:</strong> <span id="estado"></span></p>
+                    <p><strong>Adjunto:</strong> <span id="adjunto"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
