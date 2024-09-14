@@ -53,7 +53,7 @@ function getColorClass($estado)
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Tareas</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://bootswatch.com/5/litera/bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
@@ -62,7 +62,7 @@ function getColorClass($estado)
     <div class="container mt-5">
         <div class="row">
             <h2 class="col-md-10"><b>Lista de Tareas</b></h2>
-            <a href="create.php" class="btn btn-primary col-mb-2">Crear Nueva Tarea</a>
+            <a href="create.php" class="btn btn-primary col-md-2 mb-2">Crear Nueva Tarea</a>
         </div>
         <br>
         <form method="GET" action="index.php">
@@ -70,7 +70,7 @@ function getColorClass($estado)
         </form>
         <div class="table-responsive">
             <table class="table table-bordered" id="tasksTable">
-                <thead>
+                <thead class="table-primary">
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>

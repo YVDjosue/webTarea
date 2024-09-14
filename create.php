@@ -83,10 +83,10 @@ if (isset($_GET['error'])) {
                         accept=".jpg,.jpeg,.png,.pdf" />
                     <label class="custom-file-label" for="adjunto">Adjuntar</label>
                 </div>
-            </div>
+            </div class="row">
             <button type="submit" class="btn btn-primary">Guardar</button>
 
-            <button type="button" onclick="cancelAction()" class="btn btn-warning">
+            <button type="button" onclick="cancelAction()" class="btn btn-danger justify-content-end">
                 Cancelar
             </button>
         </form>
