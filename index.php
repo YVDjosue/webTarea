@@ -4,27 +4,33 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: login.php');
     exit();
 }
+
 include('conexion.php');
 
-
 $search = isset($_GET['search']) ? $_GET['search'] : '';
-$searchQuery = $search ? "WHERE nombre LIKE '%$search%' OR descripcion LIKE '%$search%' OR codigo LIKE '%$search%' OR responsable LIKE '%$search%' OR estado LIKE '%$search%'" : '';
+$searchQuery = $search ? "WHERE tareas.nombre LIKE '%$search%' OR tareas.descripcion LIKE '%$search%' OR tareas.codigo LIKE '%$search%' OR colaborador.nombres LIKE '%$search%' OR colaborador.apellidos LIKE '%$search%' OR tareas.estado LIKE '%$search%'" : '';
 
 $limit = 10; // Número de tareas por página
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 $start = ($page - 1) * $limit;
 
 // Obtener el total de tareas
-$result = $conn->query("SELECT COUNT(id) AS id FROM tareas $searchQuery");
+$result = $conn->query("SELECT COUNT(tareas.id) AS id FROM tareas 
+                        LEFT JOIN colaborador ON tareas.responsable = colaborador.id 
+                        $searchQuery");
 $taskCount = $result->fetch_assoc();
 $total = $taskCount['id'];
 $pages = ceil($total / $limit);
 
-// Obtener las tareas para la página actual
-$sql = "SELECT id, nombre, codigo, responsable, estado, adjunto, fecha_de_registro FROM tareas $searchQuery LIMIT $start, $limit";
+// Obtener las tareas para la página actual con el JOIN para nombres y apellidos del responsable
+$sql = "SELECT tareas.id, tareas.nombre, tareas.codigo, CONCAT(colaborador.nombres, ' ', colaborador.apellidos) AS responsable, tareas.estado, tareas.adjunto, tareas.fecha_de_registro
+        FROM tareas
+        LEFT JOIN colaborador ON tareas.responsable = colaborador.id
+        $searchQuery
+        LIMIT $start, $limit";
 $result = $conn->query($sql);
-
 ?>
+
 
 <?php
 function getColorClass($estado)

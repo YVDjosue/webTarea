@@ -54,7 +54,24 @@ if (isset($_GET['error'])) {
             </div>
             <div class="form-group">
                 <label for="responsable">Responsable</label>
-                <input type="text" class="form-control" id="responsable" name="responsable" required>
+                <select class="form-select" id="responsable" name="responsable" aria-label="Default select example">
+                    <option selected disabled value="">Seleccione un responsable</option>
+                    <?php
+                    // Consulta para obtener los colaboradores
+                    $sql = "SELECT id, nombres, apellidos FROM colaborador";
+                    $result = mysqli_query($conn, $sql);
+
+                    // Verificar si hay resultados
+                    if (mysqli_num_rows($result) > 0) {
+                        // Recorrer los resultados y agregar opciones al select
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<option value='" . $row['id'] . "'>" . $row['nombres'] . " " . $row['apellidos'] . "</option>";
+                        }
+                    } else {
+                        echo "<option value=''>No hay colaboradores registrados</option>";
+                    }
+                    ?>
+                </select>
             </div>
             <div class="form-group">
                 <label for="estado">Estado</label>
@@ -90,6 +107,7 @@ if (isset($_GET['error'])) {
                 Cancelar
             </button>
         </form>
+        <br>
     </div>
 
     <script>
@@ -139,6 +157,22 @@ if (isset($_GET['error'])) {
         }
 
         document.getElementById('createTaskForm').addEventListener('submit', function(event) {
+            var responsable = document.getElementById('responsable').value;
+            //verificar que el responsable no este vacío
+            if (responsable === '') {
+                swal({
+                    title: "Error",
+                    text: "Cuidado! Debe seleccionar un responsable.",
+                    icon: "warning",
+                }).then((willContinue) => {
+                    if (willContinue) {
+                        event.preventDefault();
+                    }
+                });
+                event.preventDefault();
+            }
+
+
             var fechaRegistro = new Date(document.getElementById('fecha_de_registro').value);
             var fechaCulminacion = new Date(document.getElementById('fecha_culminacion').value);
             var fechaFinalizacion = new Date(document.getElementById('fecha_finalizacion').value);
