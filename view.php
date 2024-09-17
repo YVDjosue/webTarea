@@ -4,7 +4,7 @@ include('security.php');
 include('conexion.php');
 
 $id = $_GET['id'];
-$sql = "SELECT * FROM tareas WHERE id = $id";
+$sql = "SELECT tareas.*, CONCAT(colaborador.nombres, ' ', colaborador.apellidos) AS responsable FROM tareas LEFT JOIN colaborador ON tareas.responsable = colaborador.id WHERE tareas.id = $id";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
 ?>

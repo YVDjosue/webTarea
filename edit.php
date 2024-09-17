@@ -4,13 +4,23 @@ if (!isset($_SESSION['usuario'])) {
     header('Location: login.php');
     exit();
 }
+
 include('conexion.php');
 
 $id = $_GET['id'];
-$sql = "SELECT * FROM tareas WHERE id = $id";
+
+// Consulta para obtener los detalles de la tarea y el responsable actual
+$sql = "SELECT tareas.*, colaborador.id AS responsable_id, CONCAT(colaborador.nombres, ' ', colaborador.apellidos) AS responsable
+        FROM tareas
+        LEFT JOIN colaborador ON tareas.responsable = colaborador.id
+        WHERE tareas.id = $id";
 $result = $conn->query($sql);
 $row = $result->fetch_assoc();
+
+// Consulta para obtener todos los colaboradores
+$colaboradores = $conn->query("SELECT id, CONCAT(nombres, ' ', apellidos) AS nombre_completo FROM colaborador WHERE estado = 1");
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -20,6 +30,7 @@ $row = $result->fetch_assoc();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar Tarea</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </head>
 
 <body>
@@ -52,10 +63,22 @@ $row = $result->fetch_assoc();
                 <label for="fecha_finalizacion">Fecha de Finalización</label>
                 <input type="date" class="form-control" id="fecha_finalizacion" name="fecha_finalizacion" value="<?php echo $row['fecha_finalizacion']; ?>" required>
             </div>
+
+            <!-- Campo de selección para el responsable -->
             <div class="form-group">
                 <label for="responsable">Responsable</label>
-                <input type="text" class="form-control" id="responsable" name="responsable" value="<?php echo $row['responsable']; ?>" required>
+                <select class="form-control" id="responsable" name="responsable" required>
+                    <option value="">Seleccione un responsable</option>
+                    <?php
+                    // Recorrer todos los colaboradores y establecer el responsable actual como preseleccionado
+                    while ($colaborador = $colaboradores->fetch_assoc()) {
+                        $selected = ($colaborador['id'] == $row['responsable_id']) ? 'selected' : '';
+                        echo "<option value='{$colaborador['id']}' $selected>{$colaborador['nombre_completo']}</option>";
+                    }
+                    ?>
+                </select>
             </div>
+
             <div class="form-group">
                 <label for="estado">Estado</label>
                 <select class="form-control" id="estado" name="estado" required>
@@ -65,6 +88,7 @@ $row = $result->fetch_assoc();
                     <option value="Revisado" <?php if ($row['estado'] == 'Revisado') echo 'selected'; ?>>Revisado</option>
                 </select>
             </div>
+
             <div class="form-group">
                 <label for="eliminado">Eliminado</label>
                 <select class="form-control" id="eliminado" name="eliminado" required>
@@ -72,6 +96,7 @@ $row = $result->fetch_assoc();
                     <option value="1" <?php if ($row['eliminado'] == 1) echo 'selected'; ?>>Sí</option>
                 </select>
             </div>
+
             <div class="form-group">
                 <label for="adjunto">Adjunto</label>
                 <input type="file" class="form-control" id="adjunto" name="adjunto" accept=".jpg,.jpeg,.png,.pdf">
@@ -81,11 +106,12 @@ $row = $result->fetch_assoc();
                 Cancelar
             </button>
         </form>
-
     </div>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <script>
         document.getElementById('editTaskForm').addEventListener('submit', function(event) {
             var fechaRegistro = new Date(document.getElementById('fecha_de_registro').value);

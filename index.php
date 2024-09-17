@@ -101,10 +101,10 @@ function getColorClass($estado)
                                 <td>{$row['responsable']}</td>
                                 <td><span class='{$colorClass}'>{$row['estado']}</span></td>
                                 <td>
-                                    <a href='view.php?id={$row['id']}' class='btn btn-info btn-sm'><i class='bi bi-eye-fill'></i></a>
+                                    <a href='view.php?id={$row['id']}' class='btn btn-success btn-sm'><i class='bi bi-eye-fill'></i></a>
                                      <a href='edit.php?id={$row['id']}' class='btn btn-primary btn-sm'><i class='bi bi-pencil-fill'></i></a>
                                      <button class='btn btn-danger btn-sm delete-btn' data-id='{$row['id']}' data-toggle='modal' data-target='#confirmDeleteModal'><i class='bi bi-x-lg'></i></button>
-                                     " . (!empty($adjunto) ? "<a href='files/{$adjunto}' class='btn btn-secondary btn-sm' target='_blank'><i class='bi bi-file-earmark-text'></i></a>" : "") . "
+                                     " . (!empty($adjunto) ? "<a href='files/{$adjunto}' class='btn btn-warning btn-sm' target='_blank'><i class='bi bi-file-earmark-text'></i></a>" : "") . "
                                      
                                 </td>
                               </tr>";
