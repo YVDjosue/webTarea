@@ -5,6 +5,7 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 include('conexion.php');
+
 // Comprobación de errores en la URL
 $error = '';
 if (isset($_GET['error'])) {
@@ -27,34 +28,56 @@ if (isset($_GET['error'])) {
     <?php include('navbar.php'); ?>
     <div class="container mt-5">
         <h2 class="mb-4">Crear Nueva Tarea</h2>
-        <form id="createTaskForm" action="store.php" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="codigo">Código</label>
-                <input type="text" class="form-control" id="codigo" name="codigo" required>
-            </div>
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" required>
+        <form id="createTaskForm" action="store.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="codigo">Código</label>
+                    <input type="text" class="form-control" id="codigo" name="codigo" required>
+                    <div class="invalid-feedback">
+                        Por favor, ingrese un código válido.
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    <div class="invalid-feedback">
+                        Por favor, ingrese un nombre válido.
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
                 <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                <div class="invalid-feedback">
+                    Por favor, ingrese una descripción válida.
+                </div>
             </div>
-            <div class="form-group">
-                <label for="fecha_de_registro">Fecha de Registro</label>
-                <input type="date" class="form-control" id="fecha_de_registro" name="fecha_de_registro" value="<?php echo date('Y-m-d'); ?>" readonly>
-            </div>
-            <div class="form-group">
-                <label for="fecha_culminacion">Fecha de Culminación</label>
-                <input type="date" class="form-control" id="fecha_culminacion" name="fecha_culminacion" required>
-            </div>
-            <div class="form-group">
-                <label for="fecha_finalizacion">Fecha de Finalización</label>
-                <input type="date" class="form-control" id="fecha_finalizacion" name="fecha_finalizacion" required>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="fecha_de_registro">Fecha de Registro</label>
+                    <input type="date" class="form-control" id="fecha_de_registro" name="fecha_de_registro" value="<?php echo date('Y-m-d'); ?>" readonly>
+                    <div class="invalid-feedback">
+                        Por favor, ingrese una fecha de registro válida.
+                    </div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="fecha_culminacion">Fecha de Culminación</label>
+                    <input type="date" class="form-control" id="fecha_culminacion" name="fecha_culminacion" required>
+                    <div class="invalid-feedback">
+                        Por favor, ingrese una fecha de culminación válida.
+                    </div>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="fecha_finalizacion">Fecha de Finalización</label>
+                    <input type="date" class="form-control" id="fecha_finalizacion" name="fecha_finalizacion" required>
+                    <div class="invalid-feedback">
+                        Por favor, ingrese una fecha de finalización válida.
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label for="responsable">Responsable</label>
-                <select class="form-select" id="responsable" name="responsable" aria-label="Default select example">
+                <select class="form-select" id="responsable" name="responsable" aria-label="Default select example" required>
                     <option selected disabled value="">Seleccione un responsable</option>
                     <?php
                     // Consulta para obtener los colaboradores
@@ -72,40 +95,47 @@ if (isset($_GET['error'])) {
                     }
                     ?>
                 </select>
+                <div class="invalid-feedback">
+                    Por favor, seleccione un responsable.
+                </div>
             </div>
-            <div class="form-group">
-                <label for="estado">Estado</label>
-                <select class="form-control" id="estado" name="estado" required>
-                    <option value="Nuevo">Nuevo</option>
-                    <option value="En Curso">En Curso</option>
-                    <option value="Culminado">Culminado</option>
-                    <option value="Revisado">Revisado</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="eliminado">Eliminado</label>
-                <select class="form-control" id="eliminado" name="eliminado" required>
-                    <option value="0">No</option>
-                    <option value="1">Sí</option>
-                </select>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="estado">Estado</label>
+                    <select class="form-control" id="estado" name="estado" required>
+                        <option value="Nuevo">Nuevo</option>
+                        <option value="En Curso">En Curso</option>
+                        <option value="Culminado">Culminado</option>
+                        <option value="Revisado">Revisado</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Por favor, seleccione un estado.
+                    </div>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="eliminado">Eliminado</label>
+                    <select class="form-control" id="eliminado" name="eliminado" required>
+                        <option value="0">No</option>
+                        <option value="1">Sí</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Por favor, seleccione una opción.
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label for="adjunto">Subir Archivo</label>
                 <div class="custom-file">
-                    <input
-                        type="file"
-                        class="form-control-file"
-                        id="adjunto"
-                        name="adjunto"
-                        accept=".jpg,.jpeg,.png,.pdf" />
+                    <input type="file" class="form-control-file" id="adjunto" name="adjunto" accept=".jpg,.jpeg,.png,.pdf">
                     <label class="custom-file-label" for="adjunto">Adjuntar</label>
                 </div>
-            </div class="row">
-            <button type="submit" class="btn btn-primary">Guardar</button>
-
-            <button type="button" onclick="cancelAction()" class="btn btn-danger justify-content-end">
-                Cancelar
-            </button>
+            </div>
+            <div class="row">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <button type="button" onclick="cancelAction()" class="btn btn-danger justify-content-end">
+                    Cancelar
+                </button>
+            </div>
         </form>
         <br>
     </div>
@@ -156,6 +186,22 @@ if (isset($_GET['error'])) {
             });
         }
 
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                var forms = document.getElementsByClassName('needs-validation');
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+
         document.getElementById('createTaskForm').addEventListener('submit', function(event) {
             var responsable = document.getElementById('responsable').value;
             //verificar que el responsable no este vacío
@@ -171,7 +217,6 @@ if (isset($_GET['error'])) {
                 });
                 event.preventDefault();
             }
-
 
             var fechaRegistro = new Date(document.getElementById('fecha_de_registro').value);
             var fechaCulminacion = new Date(document.getElementById('fecha_culminacion').value);

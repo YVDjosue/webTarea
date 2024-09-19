@@ -15,8 +15,8 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start = ($page - 1) * $limit;
 
 // Preparar la consulta para contar tareas
-$stmt = $conn->prepare("SELECT COUNT(tareas.id) AS id FROM tareas
-                        LEFT JOIN colaborador ON tareas.responsable = colaborador.id
+$stmt = $conn->prepare("SELECT COUNT(tareas.id) AS id FROM tareas 
+                        LEFT JOIN colaborador ON tareas.responsable = colaborador.id 
                         $searchQuery");
 if ($search) {
     $searchParam = "%$search%";
@@ -73,16 +73,16 @@ function getColorClass($estado)
 </head>
 
 <body>
-    <?php include('navbar.php'); ?>
+    <?php include('recursos/navbar.php'); ?>
     <div class="container mt-5">
         <div class="row">
-            <h2 class="col-md-10"><b>Lista de Tareas</b></h2>
+            <h2 class="col-md-10 text-dark"><b>LISTA DE TAREAS</b></h2>
             <a href="create.php" class="btn btn-primary col-md-2 mb-2">Crear Nueva Tarea</a>
         </div>
         <br>
-        <form method="GET" action="index.php">
+        <!-- <form method="GET" action="index.php">
             <input class="form-control mb-3" id="searchInput" name="search" type="text" placeholder="Buscar..." value="<?php echo $search; ?>">
-        </form>
+        </form> -->
         <div class="table-responsive">
             <table class="table table-bordered" id="tasksTable">
                 <thead class="table-primary">
@@ -180,7 +180,7 @@ function getColorClass($estado)
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Información de la tarea</h5>
-                    <button type="button" class="btn-close " data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
                         <!-- <span aria-hidden="true">&times;</span> -->
                     </button>
                 </div>
