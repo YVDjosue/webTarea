@@ -7,30 +7,41 @@ if (!isset($_SESSION['usuario'])) {
 
 include('conexion.php');
 
-$search = isset($_GET['search']) ? $_GET['search'] : '';
-$searchQuery = $search ? "WHERE tareas.nombre LIKE '%$search%' OR tareas.descripcion LIKE '%$search%' OR tareas.codigo LIKE '%$search%' OR colaborador.nombres LIKE '%$search%' OR colaborador.apellidos LIKE '%$search%' OR tareas.estado LIKE '%$search%'" : '';
+$search = isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '';
+$searchQuery = $search ? "WHERE tareas.nombre LIKE ? OR tareas.descripcion LIKE ? OR tareas.codigo LIKE ? OR colaborador.nombres LIKE ? OR colaborador.apellidos LIKE ? OR tareas.estado LIKE ?" : '';
 
 $limit = 10; // Número de tareas por página
-$page = isset($_GET['page']) ? $_GET['page'] : 1;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $start = ($page - 1) * $limit;
 
-// Obtener el total de tareas
-$result = $conn->query("SELECT COUNT(tareas.id) AS id FROM tareas 
-                        LEFT JOIN colaborador ON tareas.responsable = colaborador.id 
+// Preparar la consulta para contar tareas
+$stmt = $conn->prepare("SELECT COUNT(tareas.id) AS id FROM tareas
+                        LEFT JOIN colaborador ON tareas.responsable = colaborador.id
                         $searchQuery");
+if ($search) {
+    $searchParam = "%$search%";
+    $stmt->bind_param('ssssss', $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 $taskCount = $result->fetch_assoc();
 $total = $taskCount['id'];
 $pages = ceil($total / $limit);
 
-// Obtener las tareas para la página actual con el JOIN para nombres y apellidos del responsable
-$sql = "SELECT tareas.id, tareas.nombre, tareas.codigo, CONCAT(colaborador.nombres, ' ', colaborador.apellidos) AS responsable, tareas.estado, tareas.adjunto, tareas.fecha_de_registro
-        FROM tareas
-        LEFT JOIN colaborador ON tareas.responsable = colaborador.id
-        $searchQuery
-        LIMIT $start, $limit";
-$result = $conn->query($sql);
+// Preparar la consulta para obtener tareas
+$stmt = $conn->prepare("SELECT tareas.id, tareas.nombre, tareas.codigo, CONCAT(colaborador.nombres, ' ', colaborador.apellidos) AS responsable, tareas.estado, tareas.adjunto, tareas.fecha_de_registro
+                        FROM tareas
+                        LEFT JOIN colaborador ON tareas.responsable = colaborador.id
+                        $searchQuery
+                        LIMIT ?, ?");
+if ($search) {
+    $stmt->bind_param('ssssssii', $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $searchParam, $start, $limit);
+} else {
+    $stmt->bind_param('ii', $start, $limit);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
-
 
 <?php
 function getColorClass($estado)
@@ -43,14 +54,12 @@ function getColorClass($estado)
         case 'culminado':
             return 'badge text-white bg-success';
         case 'revisado':
-            return ' badge text-white bg-secondary';
+            return 'badge text-white bg-secondary';
         default:
             return 'badge text-white bg-secondary';
     }
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -101,11 +110,10 @@ function getColorClass($estado)
                                 <td>{$row['responsable']}</td>
                                 <td><span class='{$colorClass}'>{$row['estado']}</span></td>
                                 <td>
-                                    <a href='view.php?id={$row['id']}' class='btn btn-success btn-sm'><i class='bi bi-eye-fill'></i></a>
-                                     <a href='edit.php?id={$row['id']}' class='btn btn-primary btn-sm'><i class='bi bi-pencil-fill'></i></a>
-                                     <button class='btn btn-danger btn-sm delete-btn' data-id='{$row['id']}' data-toggle='modal' data-target='#confirmDeleteModal'><i class='bi bi-x-lg'></i></button>
-                                     " . (!empty($adjunto) ? "<a href='files/{$adjunto}' class='btn btn-warning btn-sm' target='_blank'><i class='bi bi-file-earmark-text'></i></a>" : "") . "
-                                     
+                                    <a href='#' class='btn btn-success btn-sm view-btn' data-id='{$row['id']}'><i class='bi bi-eye-fill'></i></a>
+                                    <a href='edit.php?id={$row['id']}' class='btn btn-primary btn-sm'><i class='bi bi-pencil-fill'></i></a>
+                                    <button class='btn btn-danger btn-sm delete-btn' data-id='{$row['id']}' data-toggle='modal' data-target='#confirmDeleteModal'><i class='bi bi-x-lg'></i></button>
+                                    " . (!empty($adjunto) ? "<a href='files/{$adjunto}' class='btn btn-warning btn-sm' target='_blank'><i class='bi bi-file-earmark-text'></i></a>" : "") . "
                                 </td>
                               </tr>";
                         }
@@ -145,8 +153,8 @@ function getColorClass($estado)
         </nav>
     </div>
 
-    <!-- Modal de Confirmación -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <!-- Modal de Confirmación eliminar tarea -->
+    <!-- <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -164,7 +172,7 @@ function getColorClass($estado)
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- modal tarea -->
     <div id="modalTarea" class="modal fade" tabindex="-1" role="dialog">
@@ -172,8 +180,8 @@ function getColorClass($estado)
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Información de la tarea</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                    <button type="button" class="btn-close " data-dismiss="modal" aria-label="Close">
+                        <!-- <span aria-hidden="true">&times;</span> -->
                     </button>
                 </div>
                 <div class="modal-body">
@@ -188,7 +196,7 @@ function getColorClass($estado)
                     <p><strong>Adjunto:</strong> <span id="adjunto"></span></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -199,7 +207,55 @@ function getColorClass($estado)
             document.querySelectorAll('.delete-btn').forEach(function(button) {
                 button.addEventListener('click', function() {
                     var id = this.getAttribute('data-id');
-                    document.getElementById('confirmDeleteButton').setAttribute('href', 'delete.php?id=' + id);
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "No podrás revertir esto.",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, eliminar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = 'delete.php?id=' + id;
+                        }
+                    });
+                });
+            });
+
+            document.querySelectorAll('.view-btn').forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault(); // Evita la redirección
+                    var id = this.getAttribute('data-id');
+                    fetch('get_task_info.php?id=' + id)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: data.error
+                                });
+                            } else {
+                                document.getElementById('codigo').textContent = data.codigo;
+                                document.getElementById('nombre').textContent = data.nombre;
+                                document.getElementById('descripcion').textContent = data.descripcion;
+                                document.getElementById('fecha_de_registro').textContent = data.fecha_de_registro;
+                                document.getElementById('fecha_culminacion').textContent = data.fecha_culminacion;
+                                document.getElementById('fecha_finalizacion').textContent = data.fecha_finalizacion;
+                                document.getElementById('responsable').textContent = data.responsable;
+                                document.getElementById('estado').textContent = data.estado;
+                                document.getElementById('adjunto').innerHTML = data.adjunto ? `<a href="files/${data.adjunto}" target="_blank">Ver adjunto</a>` : 'Sin adjunto';
+                                $('#modalTarea').modal('show');
+                            }
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Hubo un error al cargar la información de la tarea.'
+                            });
+                        });
                 });
             });
         });
