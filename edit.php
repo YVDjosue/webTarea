@@ -64,7 +64,7 @@ $colaboradores = $conn->query("SELECT id, CONCAT(nombres, ' ', apellidos) AS nom
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label for="fecha_de_registro">Fecha de Registro</label>
-                    <input type="date" class="form-control" id="fecha_de_registro" name="fecha_de_registro" value="<?php echo $row['fecha_de_registro']; ?>" required>
+                    <input type="date" class="form-control" id="fecha_de_registro" name="fecha_de_registro" value="<?php echo $row['fecha_de_registro']; ?>" disabled required>
                     <div class="invalid-feedback">
                         Por favor, ingrese una fecha de registro válida.
                     </div>
@@ -128,8 +128,8 @@ $colaboradores = $conn->query("SELECT id, CONCAT(nombres, ' ', apellidos) AS nom
                 <label for="adjunto">Adjunto</label>
                 <input type="file" class="form-control" id="adjunto" name="adjunto" accept=".jpg,.jpeg,.png,.pdf">
             </div>
-            <button type="submit" class="btn btn-primary">Actualizar</button>
-            <button onclick="window.location.href='/index.php'" class="btn btn-warning">
+            <button type="submit" class="btn btn-success mr-2">Actualizar</button>
+            <button type="button" onclick="window.location.href='/index.php'" class="btn btn-warning mr-2">
                 Cancelar
             </button>
         </form>

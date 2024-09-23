@@ -72,14 +72,17 @@ function getColorClass($estado)
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
-<body>
+<body class="bg-body-secondary">
     <?php include('recursos/navbar.php'); ?>
-    <div class="container mt-5">
+    <div class="container mt-2">
         <div class="row">
-            <h2 class="col-md-10 text-dark"><b>LISTA DE TAREAS</b></h2>
+            <h2 class="col-md-10 text-dark"><b>Lista de Tareas</b></h2>
             <a href="create.php" class="btn btn-primary col-md-2 mb-2">Crear Nueva Tarea</a>
         </div>
-        <br>
+        <div class="d-flex justify-content-end">
+            <a href="index2.php" class='btn btn-success btn-md mb-1'><i class="bi bi-view-stacked"></i></a>
+
+        </div>
         <!-- <form method="GET" action="index.php">
             <input class="form-control mb-3" id="searchInput" name="search" type="text" placeholder="Buscar..." value="<?php echo $search; ?>">
         </form> -->
@@ -180,7 +183,7 @@ function getColorClass($estado)
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Información de la tarea</h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <!-- <span aria-hidden="true">&times;</span> -->
                     </button>
                 </div>
@@ -196,7 +199,7 @@ function getColorClass($estado)
                     <p><strong>Adjunto:</strong> <span id="adjunto"></span></p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -262,7 +265,7 @@ function getColorClass($estado)
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 

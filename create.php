@@ -77,8 +77,8 @@ if (isset($_GET['error'])) {
             </div>
             <div class="form-group">
                 <label for="responsable">Responsable</label>
-                <select class="form-select" id="responsable" name="responsable" aria-label="Default select example" required>
-                    <option selected disabled value="">Seleccione un responsable</option>
+                <select class="form-control" id="responsable" name="responsable" aria-label="Default select example" required>
+                    <option value="">Seleccione un responsable</option>
                     <?php
                     // Consulta para obtener los colaboradores
                     $sql = "SELECT id, nombres, apellidos FROM colaborador";
@@ -130,9 +130,10 @@ if (isset($_GET['error'])) {
                     <label class="custom-file-label" for="adjunto">Adjuntar</label>
                 </div>
             </div>
+
             <div class="row">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-                <button type="button" onclick="cancelAction()" class="btn btn-danger justify-content-end">
+                <button type="submit" class="btn btn-success mr-2">Guardar</button>
+                <button type="button" onclick="cancelAction()" class="btn btn-danger">
                     Cancelar
                 </button>
             </div>
