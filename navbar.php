@@ -15,6 +15,7 @@
             <path d="m8 3 4 8 5-5 5 15H2L8 3z"></path>
         </svg>
     </a>
+    <H3 class="text-light">Mastnac Team</H3>
     <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon">hola</span>
     </button> -->

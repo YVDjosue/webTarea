@@ -125,11 +125,14 @@ $colaboradores = $conn->query("SELECT id, CONCAT(nombres, ' ', apellidos) AS nom
                 </div>
             </div>
             <div class="form-group">
-                <label for="adjunto">Adjunto</label>
-                <input type="file" class="form-control" id="adjunto" name="adjunto" accept=".jpg,.jpeg,.png,.pdf">
+                <label for="adjunto">Subir Archivo</label>
+                <div class="custom-file">
+                    <input type="file" class="form-control-file" id="adjunto" name="adjunto" accept=".jpg,.jpeg,.png,.pdf">
+                    <label class="custom-file-label" for="adjunto">Adjuntar</label>
+                </div>
             </div>
             <button type="submit" class="btn btn-success mr-2">Actualizar</button>
-            <button type="button" onclick="window.location.href='/index.php'" class="btn btn-warning mr-2">
+            <button type="button" onclick="window.location.href='/index.php'" class="btn btn-danger mr-2">
                 Cancelar
             </button>
         </form>
@@ -169,6 +172,11 @@ $colaboradores = $conn->query("SELECT id, CONCAT(nombres, ' ', apellidos) AS nom
                 swal('Error', 'La fecha de finalización debe ser mayor o igual a la fecha de culminación.', 'error');
                 event.preventDefault();
             }
+        });
+
+        document.getElementById('adjunto').addEventListener('change', function() {
+            var fileName = this.files[0].name;
+            this.nextElementSibling.innerHTML = fileName;
         });
     </script>
 </body>
