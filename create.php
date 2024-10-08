@@ -83,6 +83,10 @@ include('conexion.php');
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
+    const fechaInput = document.getElementById('fecha_de_registro');
+    const hoy = new Date().toISOString().split('T')[0];
+    fechaInput.value = hoy;
+
     function validateForm() {
         swal({
             title: "Cuidado!",
